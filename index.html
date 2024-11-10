@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Deduplicator</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            line-height: 1.5;
+        }
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            margin: 1rem 0;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0052a3;
+        }
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+        .stats {
+            margin-top: 1rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>Email Deduplicator</h1>
+    <p>Paste your list of emails (one per line or comma-separated) below:</p>
+    
+    <textarea id="inputEmails" placeholder="example1@email.com&#10;example2@email.com&#10;example1@email.com"></textarea>
+    
+    <button onclick="deduplicateEmails()">Remove Duplicates</button>
+    
+    <div class="result">
+        <h3>Unique Emails:</h3>
+        <textarea id="outputEmails" readonly></textarea>
+        <div class="stats" id="stats"></div>
+    </div>
+
+    <script>
+        function deduplicateEmails() {
+            // Get input text
+            const input = document.getElementById('inputEmails').value;
+            
+            // Split input by commas and newlines
+            const emails = input.split(/[\s,]+/)
+                .map(email => email.trim().toLowerCase())
+                .filter(email => {
+                    // Basic email validation
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    return email && emailRegex.test(email);
+                });
+            
+            // Remove duplicates using Set
+            const uniqueEmails = [...new Set(emails)];
+            
+            // Sort alphabetically
+            uniqueEmails.sort();
+            
+            // Display results
+            document.getElementById('outputEmails').value = uniqueEmails.join('\n');
+            
+            // Show stats
+            const duplicates = emails.length - uniqueEmails.length;
+            document.getElementById('stats').innerHTML = `
+                Total emails: ${emails.length}<br>
+                Unique emails: ${uniqueEmails.length}<br>
+                Duplicates removed: ${duplicates}
+            `;
+        }
+    </script>
+</body>
+</html>
